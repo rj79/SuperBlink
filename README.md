@@ -10,8 +10,10 @@ milliseconds, then off for another specified milliseconds. Set an on/off
 pattern by calling:
         setPattern(\<on millis\>, \<off millis\>);
 2. **Bit pattern**: In this mode the LED is lit according to a binary pattern
-by calling:
-        setBitPattern(\<32-bit pattern\>, \<bit duration millis\>);
+by calling one of:
+        set32BitPattern(\<32-bit pattern\>, \<bit duration millis\>);
+        set16BitPattern(\<16-bit pattern\>, \<bit duration millis\>);
+        set8BitPattern(\<8-bit pattern\>, \<bit duration millis\>);
 The pattern runs left-to-right, i.e. with the most significant bits first.
 
 
@@ -47,7 +49,7 @@ Bit pattern example
     {
         // Configure LED to blink according to a 32-bit binary pattern
         // The duration of each bit is 200 ms.
-        led.setBitPattern(0b10101010111100001111000011110000, 200);
+        led.set32BitPattern(0b10101010111100001111000011110000, 200);
     }
     
     void loop()

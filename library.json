@@ -1,6 +1,6 @@
 {
     "name": "SuperBlink",
-    "version": "0.1-dev",
+    "version": "0.2.0",
     "description": "Library for making LED blinking patterns.",
     "keywords": "led, blink, pattern",
     "repository": {

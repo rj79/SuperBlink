@@ -34,15 +34,29 @@ public:
      * @param pattern The pattern to use.
      * @param bitTimeMS The duration in ms of each bit.
      */
-    void setBitPattern(uint32_t pattern, uint32_t bitTimeMS);
+    void set32BitPattern(uint32_t pattern, uint32_t bitTimeMS);
 
     /**
-     * Turn off the LED.
+     * Like @ref set32BitPattern but using a 16 bit pattern.
+     * @param pattern The pattern to use.
+     * @param bitTimeMS The duration in ms of each bit.
+     */
+    void set16BitPattern(uint16_t pattern, uint32_t bitTimeMS);
+
+    /**
+     * Like @ref set32BitPattern but using a 8 bit pattern.
+     * @param pattern The pattern to use.
+     * @param bitTimeMS The duration in ms of each bit.
+     */
+    void set8BitPattern(uint8_t pattern, uint32_t bitTimeMS);
+
+    /**
+     * Turn the LED off.
      */
     void off();
 
     /**
-     * Turn on the LED.
+     * Turn the LED on.
      */
     void on();
 
@@ -70,7 +84,8 @@ private:
     uint32_t LastChange;
     uint32_t BitPattern;
     uint32_t BitTime;
-    uint32_t BitPos;
+    uint8_t BitCount;
+    uint8_t BitPos;
     
 
     void update(unsigned long time);

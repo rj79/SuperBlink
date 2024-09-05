@@ -36,10 +36,33 @@ void SuperBlink::setPattern(uint32_t onTimeMS, uint32_t offTimeMS)
     update(millis());
 }
 
-void SuperBlink::setBitPattern(uint32_t pattern, uint32_t bitTimeMS)
+void SuperBlink::set32BitPattern(uint32_t pattern, uint32_t bitTimeMS)
 {
     Mode = BIT_PATTERN;
+    BitCount = 32;
     BitPattern = reverse_bits(pattern);
+    BitTime = bitTimeMS;
+    BitPos = 0;
+    On = BitPattern & 1;
+    update(millis());
+}
+
+void SuperBlink::set16BitPattern(uint16_t pattern, uint32_t bitTimeMS)
+{
+    Mode = BIT_PATTERN;
+    BitCount = 16;
+    BitPattern = reverse_bits((uint32_t)pattern) >> 16;
+    BitTime = bitTimeMS;
+    BitPos = 0;
+    On = BitPattern & 1;
+    update(millis());
+}
+
+void SuperBlink::set8BitPattern(uint8_t pattern, uint32_t bitTimeMS)
+{
+    Mode = BIT_PATTERN;
+    BitCount = 8;
+    BitPattern = reverse_bits((uint32_t)pattern) >> 24;
     BitTime = bitTimeMS;
     BitPos = 0;
     On = BitPattern & 1;
@@ -79,7 +102,7 @@ void SuperBlink::loop()
     }
     else if (Mode == BIT_PATTERN) {
         if (now - LastChange >= BitTime) {
-            BitPos = (BitPos + 1) & 0x1F;
+            BitPos = (BitPos + 1) & (BitCount - 1);
             On = (BitPattern >> BitPos) & 1;
             update(now);
         }
