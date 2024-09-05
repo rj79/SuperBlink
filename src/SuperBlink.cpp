@@ -129,7 +129,7 @@ void SuperBlink::update(unsigned long time)
 {
     if (Mode == SINE) {
         float t = ((float)time) / 1000.0;            
-        float c = 127.5 * sin(t * 2 * PI / FreqHz) + 127.5;
+        float c = 127.5 * sin(t * 2 * PI * FreqHz) + 127.5;
         int y = (int)(c);
         analogWrite(Pin, Inverse ? 255 - y : y);
     }
