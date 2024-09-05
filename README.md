@@ -3,7 +3,7 @@ SuperBlink is a library for creating LED blinking patterns.
 It can be useful to indicate various states to the user.
 
 # Usage
-There are two main modes of operation:
+There are three main modes of operation:
 
 1. **On/Off**: In this mode the LED is on for a specified number of 
 milliseconds, then off for another specified milliseconds. Set an on/off 
@@ -15,6 +15,8 @@ by calling one of:
         set16BitPattern(\<16-bit pattern\>, \<bit duration millis\>);
         set8BitPattern(\<8-bit pattern\>, \<bit duration millis\>);
 The pattern runs left-to-right, i.e. with the most significant bits first.
+3. **Sine wave**: In this mode the LED will pulsate at the given frequency. 
+Note that the LED output pin must be supporting PWM.
 
 
 It is also possible to disable patterns and set the LED in a static mode by calling on() or off(). The LED is off by default.
@@ -52,6 +54,24 @@ Bit pattern example
         led.set32BitPattern(0b10101010111100001111000011110000, 200);
     }
     
+    void loop()
+    {
+        led.loop();
+    }
+
+Sine wave example
+=================
+    #include <Arduino.h>
+    #include "SuperBlink.h"
+
+    SuperBlink led(LED_BUILTIN);
+
+    void setup() 
+    {
+        // Configure LED to pulsate at a rate of 5 Hz.
+        led.setSine(5);
+    }
+
     void loop()
     {
         led.loop();

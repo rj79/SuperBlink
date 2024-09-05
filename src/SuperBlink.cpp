@@ -69,6 +69,13 @@ void SuperBlink::set8BitPattern(uint8_t pattern, uint32_t bitTimeMS)
     update(millis());
 }
 
+void SuperBlink::setSine(float freqHz)
+{
+    Mode = SINE;
+    FreqHz = freqHz;
+    update(millis());
+}
+
 void SuperBlink::on()
 {
     Mode = STATIC;
@@ -83,34 +90,52 @@ void SuperBlink::off()
     update(millis());
 }
 
-void SuperBlink::loop()
+void SuperBlink::loop(unsigned long tMS)
 {
-    unsigned long now = millis();
     if (Mode == ON_OFF) {        
         if (On) {
-            if (now - LastChange >= OnTime) {
+            if (tMS - LastChange >= OnTime) {
                 On = false;
-                update(now);
+                update(tMS);
             }
         }
         else {
-            if (now - LastChange >= OffTime) {
+            if (tMS - LastChange >= OffTime) {
                 On = true;
-                update(now);
+                update(tMS);
             }
         }
     }
     else if (Mode == BIT_PATTERN) {
-        if (now - LastChange >= BitTime) {
+        if (tMS - LastChange >= BitTime) {
             BitPos = (BitPos + 1) & (BitCount - 1);
             On = (BitPattern >> BitPos) & 1;
-            update(now);
+            update(tMS);
+        }
+    }
+    else if (Mode == SINE) {
+        if (LastChange + 10 <= tMS) {
+            update(tMS);
         }
     }
 }
 
+void SuperBlink::loop()
+{
+    loop(millis());
+}
+
 void SuperBlink::update(unsigned long time)
 {
-    digitalWrite(Pin, On ? (Inverse ? LOW : HIGH) : (Inverse ? HIGH : LOW));
+    if (Mode == SINE) {
+        float t = ((float)time) / 1000.0;            
+        float c = 127.5 * sin(t * 2 * PI / FreqHz) + 127.5;
+        int y = (int)(c);
+        analogWrite(Pin, Inverse ? 255 - y : y);
+    }
+    else {
+        digitalWrite(Pin, On ? (Inverse ? LOW : HIGH) : (Inverse ? HIGH : LOW));
+        
+    }
     LastChange = time;
 }

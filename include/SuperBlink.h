@@ -51,6 +51,12 @@ public:
     void set8BitPattern(uint8_t pattern, uint32_t bitTimeMS);
 
     /**
+     * Make the LED pulsate with frequency freqHz.
+     * @param freqHz Frequency in Herz.
+     */
+    void setSine(float freqHz);
+
+    /**
      * Turn the LED off.
      */
     void off();
@@ -65,12 +71,19 @@ public:
      */
     void loop();
 
+    /** 
+     * Same as loop(), but use a specified time.
+     * @param tMS The time in milliseconds.
+     */
+    void loop(unsigned long tMS);
+
 private:
     enum EMode
     {
         STATIC = 0,
         ON_OFF = 1,
         BIT_PATTERN = 2,
+        SINE = 3,
     };
     
     
@@ -86,7 +99,7 @@ private:
     uint32_t BitTime;
     uint8_t BitCount;
     uint8_t BitPos;
-    
+    float FreqHz;
 
     void update(unsigned long time);
 };
