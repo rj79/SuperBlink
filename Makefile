@@ -8,3 +8,6 @@ example_bit_pattern:
 
 example_manual:
 	pio ci examples/manual.cpp --lib=. --project-conf=platformio.ini
+
+example_sine:
+	pio ci examples/sine.cpp --lib=. --project-conf=platformio.ini
