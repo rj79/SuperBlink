@@ -100,6 +100,7 @@ private:
     uint8_t BitCount;
     uint8_t BitPos;
     float FreqHz;
+    unsigned long StartTime;
 
     void update(unsigned long time);
 };

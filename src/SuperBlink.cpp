@@ -73,7 +73,8 @@ void SuperBlink::setSine(float freqHz)
 {
     Mode = SINE;
     FreqHz = freqHz;
-    update(millis());
+    StartTime = millis();
+    update(StartTime);
 }
 
 void SuperBlink::on()
@@ -128,8 +129,12 @@ void SuperBlink::loop()
 void SuperBlink::update(unsigned long time)
 {
     if (Mode == SINE) {
-        float t = ((float)time) / 1000.0;            
-        float c = 127.5 * sin(t * 2 * PI * FreqHz) + 127.5;
+        // T is relative to when setSine() was called.
+        float t = ((float)(time - StartTime)) / 1000.0;            
+        // The LED should start dark. To achieve this, the sine has to be phase 
+        // shifted by 1/4 of the period time to the right, when half of the 
+        // amplitude (127.5) is added as vertical shift.
+        float c = 127.5 * sin((t - 1/(4 * FreqHz)) * 2 * PI * FreqHz) + 127.5;
         int y = (int)(c);
         analogWrite(Pin, Inverse ? 255 - y : y);
     }
