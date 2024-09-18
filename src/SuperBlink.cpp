@@ -21,7 +21,9 @@ SuperBlink::SuperBlink(uint8_t pin, bool inverse) :
     LastChange(0),
     BitPattern(0),
     BitTime(0),
-    BitPos(0)
+    BitCount(0),
+    BitPos(0),
+    StartTime(0)
 {
     pinMode(Pin, OUTPUT);
     off();
