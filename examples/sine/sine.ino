@@ -1,15 +1,16 @@
 #include <Arduino.h>
 #include "SuperBlink.h"
 
-SuperBlink led(LED_BUILTIN);
+StandardLED led(LED_BUILTIN);
+SuperBlink blink(led);
 
 void setup() 
 {
     // Configure LED to pulsate at a rate of 1/5 Hz.
-    led.setSine(1.0/5);
+    blink.setSine(1.0/5);
 }
 
 void loop()
 {
-    led.loop();
+    blink.loop();
 }

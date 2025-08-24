@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include "SuperBlink.h"
+#include "Adafruit_NeoPixel.h"
 
-StandardLED led(LED_BUILTIN);
+RgbLED led(7, NEO_RGB); // Assume that one neopixel is connected to pin 7.
 SuperBlink blink(led);
 
 void setup() 

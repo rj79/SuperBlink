@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "SuperBlink.h"
+#include "Adafruit_NeoPixel.h"
 
 uint32_t reverse_bits(uint32_t value)
 {
@@ -11,9 +12,80 @@ uint32_t reverse_bits(uint32_t value)
     return result;
 }
 
-SuperBlink::SuperBlink(uint8_t pin, bool inverse) :
+StandardLED::StandardLED(uint8_t pin, bool inverse) :
     Pin(pin),
-    Inverse(inverse),
+    Inverse(inverse)
+{
+    pinMode(Pin, OUTPUT);
+    off();
+}
+
+void StandardLED::on()
+{
+    digitalWrite(Pin, (Inverse ? LOW : HIGH));
+}
+
+void StandardLED::off()
+{
+    digitalWrite(Pin, (Inverse ? HIGH : LOW));
+}
+
+void StandardLED::setBrightness(uint8_t b) 
+{
+    analogWrite(Pin, Inverse ? 255 - b : b);
+}
+
+
+RgbLED::RgbLED(uint8_t dataPin, neoPixelType neoType) :
+    Pixel(1, dataPin, neoType),
+    On(false)
+{
+    #ifdef RGB_POWER
+    pinMode(RGB_POWER, OUTPUT);
+    digitalWrite(RGB_POWER, HIGH);
+    #endif
+
+    Pixel.begin();
+    update();
+}
+
+void RgbLED::on()
+{
+    On = true;
+    update();
+}
+
+void RgbLED::off()
+{
+    On = false;
+    update();
+}
+
+void RgbLED::setBrightness(uint8_t brightness) 
+{
+    Pixel.setBrightness(brightness);
+    update();
+}
+
+void RgbLED::setColor(uint8_t red, uint8_t green, uint8_t blue)
+{
+    Pixel.setPixelColor(0, Pixel.Color(red, green, blue));
+    update();
+}
+
+void RgbLED::update()
+{
+    if (On) {
+        Pixel.show();
+    }
+    else {
+        Pixel.clear();
+        Pixel.show();
+    }
+}
+
+SuperBlink::SuperBlink(LED& led) :
+    Led(led),
     Mode(STATIC),
     On(false),
     OnTime(1000),
@@ -25,8 +97,7 @@ SuperBlink::SuperBlink(uint8_t pin, bool inverse) :
     BitPos(0),
     StartTime(0)
 {
-    pinMode(Pin, OUTPUT);
-    off();
+    Led.off();
 }
 
 void SuperBlink::setPattern(uint32_t onTimeMS, uint32_t offTimeMS)
@@ -138,11 +209,15 @@ void SuperBlink::update(unsigned long time)
         // amplitude (127.5) is added as vertical shift.
         float c = 127.5 * sin((t - 1/(4 * FreqHz)) * 2 * PI * FreqHz) + 127.5;
         int y = (int)(c);
-        analogWrite(Pin, Inverse ? 255 - y : y);
+        Led.setBrightness(y);
     }
     else {
-        digitalWrite(Pin, On ? (Inverse ? LOW : HIGH) : (Inverse ? HIGH : LOW));
-        
+        if (On) {
+            Led.on();
+        }
+        else {
+            Led.off();
+        }
     }
     LastChange = time;
 }

@@ -2,7 +2,54 @@
 #define SUPERBLINK_H
 
 #include <stdint.h>
+#include <Adafruit_NeoPixel.h>
 
+/** 
+ * General interface for LED.
+ */
+class LED
+{
+public:
+    virtual ~LED() { /* Empty */ };
+    /* Turns the LED on. */
+    virtual void on() = 0;
+    /* Turns the LED off. */
+    virtual void off() = 0;
+    /* Sets the brightness of the LED. */
+    virtual void setBrightness(uint8_t b) = 0;
+};
+
+/** 
+ * Class for controlling a standard one-color LED.
+ */
+class StandardLED: public LED
+{
+public:
+    StandardLED(uint8_t pin, bool inverse=false);
+    void on();
+    void off();
+    void setBrightness(uint8_t b);
+
+private:
+    uint8_t Pin;
+    bool Inverse;
+};
+
+class RgbLED: public LED
+{
+public:
+    RgbLED(uint8_t dataPin, neoPixelType neoType);
+    void on();
+    void off();
+    void setBrightness(uint8_t brightness);
+    void setColor(uint8_t r, uint8_t g, uint8_t b);
+
+private:
+    Adafruit_NeoPixel Pixel;
+    bool On;
+
+    void update();
+};
 
 /**
  * A class to control LED blinking
@@ -17,7 +64,7 @@ public:
      * when the output is set low. The default is false meaning that it is 
      * assumed that the LED will light when the output is set high.
     */
-    SuperBlink(uint8_t pin, bool inverse=false);
+    SuperBlink(LED& led);
 
     /**
      * Set the LED in alternating on/off mode.
@@ -87,8 +134,7 @@ private:
     };
     
     
-    uint8_t Pin;
-    bool Inverse;
+    LED& Led;
 
     EMode Mode;
     bool On;
